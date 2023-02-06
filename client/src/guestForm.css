@@ -1,0 +1,12 @@
+*{
+    /* background-color: #444950; */
+    /* color: white; */
+}
+.MainForm{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    width: 100vw;
+    align-items: center;
+}
