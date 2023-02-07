@@ -2,9 +2,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import React, { useState } from 'react'
-// import axios from 'axios'
+import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './guestForm.css'
+import Collapse from 'react-bootstrap/Collapse';
 
 
 export default function GuestForm(){
@@ -17,6 +18,10 @@ export default function GuestForm(){
     guestTimeActive:''
   })
 
+  //state for storing any errors that we want to present to frontend
+  const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+
   //stores our form data inside the USE STATE
   const handleChange = (event) =>{
     setFormData({...formData, [event.target.name]: event.target.value})
@@ -26,24 +31,37 @@ export default function GuestForm(){
     event.preventDefault();
     //validate incoming data, check if any values are empty
     if (validateInput(formData)){
-
+      setError(validateInput(formData))
+      setOpen(!open);
+    }else{
+      //here we run our axios code to submit our data to API
+      postData(formData)
     }
   }
+
+  //after our form data input has been validated we then post the data to our endpoint
+  const postData = async(data) =>{
+    axios.post('http://192.168.1.202:5000/formData', formData)
+      .then(response =>{
+        console.log(response.data)
+      })
+  } 
 
   const validateInput = (data) =>{
     for(var key in data) {
       if(data[key] === "") {
-         return(key + "is Blank")
+         return("Please fill all form fields!")
       }
   }}
 
 
   return(
     <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
+      <h1>Self Service Guest Portal</h1>
           <Alert key="warning" variant="warning">
             By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
           </Alert>
-          <Alert></Alert>
+          
           <div className="FormElements">
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Guest First Name:</Form.Label>
@@ -108,6 +126,10 @@ export default function GuestForm(){
          <Button variant="primary" type="submit">
            Submit
          </Button>
+         <hr></hr>
+         {error !== "" &&
+          <Alert key="danger" variant='danger'>{error}</Alert>  
+          }
          </div>
        </Form>
   )
