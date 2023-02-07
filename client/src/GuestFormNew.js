@@ -17,16 +17,33 @@ export default function GuestForm(){
     guestTimeActive:''
   })
 
+  //stores our form data inside the USE STATE
   const handleChange = (event) =>{
     setFormData({...formData, [event.target.name]: event.target.value})
-    console.log(formData)
   }
 
+  const handleSubmit = (event) =>{
+    event.preventDefault();
+    //validate incoming data, check if any values are empty
+    if (validateInput(formData)){
+
+    }
+  }
+
+  const validateInput = (data) =>{
+    for(var key in data) {
+      if(data[key] === "") {
+         return(key + "is Blank")
+      }
+  }}
+
+
   return(
-    <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off'>
+    <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
           <Alert key="warning" variant="warning">
             By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
           </Alert>
+          <Alert></Alert>
           <div className="FormElements">
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Guest First Name:</Form.Label>
@@ -77,8 +94,8 @@ export default function GuestForm(){
               <Form.Label htmlFor="timeSelect">Account Duration</Form.Label>
               <Form.Select
                 id="disabledSelect"
-                name="accountDuration"
-                value={formData.accountDuration}
+                name="guestTimeActive"
+                value={formData.guestTimeActive}
                 onChange={handleChange}
                 placeholder='Duration'>
                 <option key = 'blankChoice' hidden value> --Select Duration-- </option>
