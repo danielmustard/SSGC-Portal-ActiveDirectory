@@ -1,51 +1,29 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
-import React, { Component, useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
+// import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './guestForm.css'
 
 
 export default function GuestForm(){
-     this.state = {
-      guestFirstName: '',
-      guestSurname: '',
-      purposeOfAccess: '',
-      guestLocation: '',
-      accountDuration: ''
-    };
-  
+  //state for storing our form data
+  const [formData, setFormData] = useState({
+    guestFirstName: '',
+    guestSurname: '',
+    guestPurpose:'',
+    guestLocation:'',
+    guestTimeActive:''
+  })
 
-  handleChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  };
+  const handleChange = (event) =>{
+    setFormData({...formData, [event.target.name]: event.target.value})
+    console.log(formData)
+  }
 
-  submitHandler = event => {
-    event.preventDefault();
-    //for logging state data
-    //console.log(this.state)
-    //if any of the values are blank we want to prompt the user with a warning.
-    //take data from the state object and post it to backend
-    axios.post('http://192.168.1.202:5000/formData', (this.state))
-      .then (response =>{
-        console.log(response.data.username)
-        setAPIReturn(response.data)
-      }).catch(error =>{
-        console.log(error)
-      })
-
-      
-
-  };
-  
-  
-  const { guestFirstName, guestSurname, purposeOfAccess, guestLocation, accountDuration } = this.state;
-  
   return(
-    <Form className="MainForm" onSubmit={this.submitHandler} autoComplete='off' autoCapitalize='off' autoCorrect='off'>
+    <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off'>
           <Alert key="warning" variant="warning">
             By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
           </Alert>
@@ -55,20 +33,20 @@ export default function GuestForm(){
               <Form.Control
                 type="text"
                 placeholder="Enter Guest First Name"
-                onChange={this.handleChange}
-                value={guestFirstName}
                 name="guestFirstName"
+                value={formData.guestFirstName}
+                onChange={handleChange}
               />
             </Form.Group>
-  
+
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Guest Surname:</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter Guest Name"
-                onChange={this.handleChange}
-                value={guestSurname}
                 name="guestSurname"
+                value={formData.guestSurname}
+                onChange={handleChange}                
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -76,9 +54,9 @@ export default function GuestForm(){
               <Form.Control
                 type="text"
                 placeholder="Purpose of access"
-                onChange={this.handleChange}
-                value={purposeOfAccess}
-                name="purposeOfAccess"
+                name="guestPurpose"
+                value={formData.guestPurpose}
+                onChange={handleChange} 
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -86,9 +64,9 @@ export default function GuestForm(){
               <Form.Control
                 type="text"
                 placeholder="Guest Location"
-                onChange={this.handleChange}
-                value={guestLocation}
                 name="guestLocation"
+                value={formData.guestLocation}
+                onChange={handleChange} 
               />
               <Form.Text className="text-muted">
                 For reference, your guest is not limited to using their account in this location.
@@ -99,11 +77,10 @@ export default function GuestForm(){
               <Form.Label htmlFor="timeSelect">Account Duration</Form.Label>
               <Form.Select
                 id="disabledSelect"
-                onChange={this.handleChange}
-                value={accountDuration}
                 name="accountDuration"
-                placeholder='Duration' 
-              >
+                value={formData.accountDuration}
+                onChange={handleChange}
+                placeholder='Duration'>
                 <option key = 'blankChoice' hidden value> --Select Duration-- </option>
                 <option>1 Day</option>
                 <option>2 Days</option>
