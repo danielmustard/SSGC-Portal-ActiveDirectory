@@ -10,3 +10,12 @@
     width: 100vw;
     align-items: center;
 }
+
+.AccountMadeForm{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100vw;
+    align-items: center;
+    height: 655px;
+}

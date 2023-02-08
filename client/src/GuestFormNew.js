@@ -19,8 +19,7 @@ export default function GuestForm(){
 
   //state for storing any errors that we want to present to frontend
   const [error, setError] = useState("");
-  const [dataCollected, setDataCollected] =useState(false);
-  const [apiReturn, setAPIReturn] =useState("");
+  const [apiReturn, setAPIReturn] = useState("");
   //stores our form data inside the USE STATE
   const handleChange = (event) =>{
     setFormData({...formData, [event.target.name]: event.target.value})
@@ -35,7 +34,6 @@ export default function GuestForm(){
     }else{
       //here we run our axios code to submit our data to API
       postData(formData)
-      setDataCollected(true);
     }
   }
 
@@ -43,7 +41,11 @@ export default function GuestForm(){
   const postData = async(data) =>{
     axios.post('http://192.168.1.202:5000/formData', data)
       .then(response =>{
+        console.log(response.data)
         setAPIReturn(response.data)
+      })
+      .catch(error =>{
+        error.toString() === "AxiosError: Network Error" ? setError("Unable to connect to LDAP server") : setError(error.toString());
       })
   } 
 
@@ -53,8 +55,7 @@ export default function GuestForm(){
          return("Please fill all form fields!")
       }
   }}
-
-    if (dataCollected === false){
+    if (apiReturn === ""){
       return(
         <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
           <h1>Self Service Guest Portal</h1>
@@ -133,7 +134,7 @@ export default function GuestForm(){
              </div>
            </Form>
       )
-    } else{
+    } else if(apiReturn !== ""){
       return(
           <AccountMadeScreen data={apiReturn}/>
       )
