@@ -33,6 +33,7 @@ export default function GuestForm(){
       setError(validateInput(formData))
     }else{
       //here we run our axios code to submit our data to API
+      console.log(formData)
       postData(formData)
     }
   }
@@ -118,9 +119,9 @@ export default function GuestForm(){
                     onChange={handleChange}
                     placeholder='Duration'>
                     <option key = 'blankChoice' hidden value> --Select Duration-- </option>
-                    <option>1 Day</option>
-                    <option>2 Days</option>
-                    <option>5 Days</option>
+                    <option value={1}>1 Day</option>
+                    <option value={2}>2 Days</option>
+                    <option value={5}>5 Days</option>
                     <optgroup label="For custom time requirements please contact IT Services"></optgroup>
                   </Form.Select>
                </Form.Group>

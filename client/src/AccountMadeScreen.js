@@ -28,7 +28,16 @@ export default function AccountMadeScreen(apiData){
                   value={apiData.data.password}
                   readOnly={true}           
                 />
-              </Form.Group>              
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Account Active Until:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={apiData.data.accountExpires}
+                  readOnly={true}           
+                />
+              </Form.Group>               
            </div>
          </Form>    
       )

@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require("cors");
 const ldap = require('ldapjs')
-const fs = require('fs')
+const fs = require('fs');
+const e = require('express');
 
 
 const app = express()
@@ -18,40 +19,40 @@ app.post('/formData',async (req, res) =>{
    })
 })
 
+
+
 //User should only be able to perform any of the steps below after they have authenticated with AAD, !SET THIS UP LATER
 
-const adDateCalcFunction = (timeValue) =>{
-  //account will expire 4:00pm next day which is 12:00am GMT meaning for example somone requests 
-  // a guest account on a monday morning it will expire on the Tuesday at 12:00am
+function jsDateToADDate(days) {
+  console.log(days)
+  days = parseInt(days);
+  //number of days to be active passed into 
+  //todays date
+  const now = new Date();
+  var result = new Date(now);
+  result.setDate(result.getDate() + days);
 
-  //ad time calc is strange, we need to workout the value between jan 1st 1601 and now in 100NanosecondIntervals and this is the value that AD stores for expiry
-  let num = 0;
-  if (timeValue == "1 Day"){
-      num = 3        
-  }else if(timeValue == "2 Days"){
-      num = 4
-  }else if (timeValue == "5 Days"){
-      num = 6
+  const HECTONANOSECONDS_TO_MILLISECONDS = 10 * 1000;
+  const AD_EPOCH_START = Date.UTC(1601, 0, 1, 0, 0, 0);
+
+  return {
+    adTimeValue:(new Date(result).getTime() - AD_EPOCH_START) * HECTONANOSECONDS_TO_MILLISECONDS,
+    humanReadableTime:result.toLocaleDateString("en-US",{year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
   }
-  var today = new Date();
-  today.setDate(today.getDate() + num);
-  today.setHours(0, 0, 0, 0);
-  var tzDifference = today.getTimezoneOffset();
-  today.setMinutes(today.getMinutes() + tzDifference);
-  var january1st1601 = new Date(Date.UTC(1601, 0, 1));
-  var differenceInMilliseconds = today - january1st1601;
-  var differenceIn100NanosecondIntervals = differenceInMilliseconds * 10000;
-  return differenceIn100NanosecondIntervals;
+  
 }
 
-
 async function makeUser(guest){
-    //console.log(guest)
+    console.log(guest)
     let errorLog;
     let adDisplayName = `(Guest) ${guest.guestFirstName} ${guest.guestSurname}`
 
     //including a random integer at end of guest account to avoid possible clashes
     let username = `gst_${guest.guestSurname}${Math.floor(Math.random() * 1001)}`
+
+    let expiryTime = jsDateToADDate(guest.guestTimeActive)
+
+    console.log(expiryTime)
 
     function generatePassword() {
       // Character set to be used for password generation
@@ -82,7 +83,7 @@ async function makeUser(guest){
          name: guest.guestFirstName,
          unicodePwd: unicodePwd,
          userAccountControl:'512', //this makes the account active
-         accountExpires: adDateCalcFunction(guest.accountDuration),
+         accountExpires: expiryTime.adTimeValue,
          sn: guest.guestSurname,
          givenName: guest.guestFirstName,
          userPrincipalName: `${username}@dandomain.com`,    
@@ -120,7 +121,7 @@ async function makeUser(guest){
          // console.log(result)
          if (error){
            console.log(error.toString())
-           //err + errorLog;
+           errorLog = error.toString();
          }else{
            console.log('Generated account with no errors')
            //closing connection with ldap server, prevents timeout crash from server
@@ -130,13 +131,15 @@ async function makeUser(guest){
        });
       //handling any ldap client connection error (stops server from crashing if AD terminated LDAP connection)
       client.on('error', (err) => {
-        console.log(err.message) // this will be your ECONNRESET message
+        // this will be your ECONNRESET message
+        errorLog = err.toString();        
       })
   if (errorLog == null){
     return {
       status: 201,
       username: `${username}`,
       password: `${randomPassword}`,
+      accountExpires: expiryTime.humanReadableTime
     }
     
   }else{
