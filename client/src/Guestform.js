@@ -7,8 +7,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './guestForm.css'
 import AccountMadeScreen from './AccountMadeScreen';
 import { PageLayout } from "./components/PageLayout";
+import { useIsAuthenticated } from "@azure/msal-react";
 
 export default function Guestform(){
+  const isAuthenticated = useIsAuthenticated();
   //state for storing our form data
   const [formData, setFormData] = useState({
     guestFirstName: '',
@@ -57,9 +59,8 @@ export default function Guestform(){
          return("Please fill all form fields!")
       }
   }}
-    if (apiReturn === ""){
+    if (apiReturn === "" && isAuthenticated === true){
       return(
-        <PageLayout>
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
           <h1>Self Service Guest Portal</h1>
               <Alert key="warning" variant="warning">
@@ -136,12 +137,13 @@ export default function Guestform(){
               }
              </div>
            </Form>
-        </PageLayout>
       )
     } else if(apiReturn !== ""){
       return(
           <AccountMadeScreen data={apiReturn}/>
       )
+    }else{
+      return(<PageLayout></PageLayout>)
     }//else render something else
   
 
