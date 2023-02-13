@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "react-bootstrap/Navbar";
 import { useIsAuthenticated } from "@azure/msal-react";
 import { SignInButton } from "./SignInButton";
+import '../guestForm.css'
 
 /**
  * Renders the navbar component with a sign-in button if a user is not authenticated
@@ -11,14 +11,12 @@ export const PageLayout = (props) => {
 
     return (
         <>
-            <Navbar bg="primary" variant="dark">
-                <a className="navbar-brand" href="/">MSAL React Tutorial</a>
+            <div style={{display:"flex", justifyContent:"center", flexDirection:"column",alignItems:"center", height:"100vh"}}>
+                <h1 class="display-2">Self Service Guest Portal</h1>
                 { isAuthenticated ? <span>Signed In</span> : <SignInButton /> }
-            </Navbar>
-            <h5><center>Welcome to the Microsoft Authentication Library For React Tutorial</center></h5>
-            <br />
-            <br />
-            {props.children}
+                {props.children}
+            </div>
+            
         </>
     );
 };

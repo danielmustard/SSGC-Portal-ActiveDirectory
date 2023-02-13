@@ -8,6 +8,7 @@ import './guestForm.css'
 import AccountMadeScreen from './AccountMadeScreen';
 import { PageLayout } from "./components/PageLayout";
 import { useIsAuthenticated } from "@azure/msal-react";
+import { UnauthenticatedTemplate } from "@azure/msal-react";
 
 export default function Guestform(){
   const isAuthenticated = useIsAuthenticated();
@@ -62,7 +63,7 @@ export default function Guestform(){
     if (apiReturn === "" && isAuthenticated === true){
       return(
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
-          <h1>Self Service Guest Portal</h1>
+          <h1 class="display-5">Self Service Guest Portal</h1>
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
               </Alert>
@@ -143,7 +144,11 @@ export default function Guestform(){
           <AccountMadeScreen data={apiReturn}/>
       )
     }else{
-      return(<PageLayout></PageLayout>)
+      return(<PageLayout>
+        <UnauthenticatedTemplate>
+        <p>Sign in below to create an account for your guest to use for a limited time.</p>
+        </UnauthenticatedTemplate>
+      </PageLayout>)
     }//else render something else
   
 
