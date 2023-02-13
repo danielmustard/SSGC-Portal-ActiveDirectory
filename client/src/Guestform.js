@@ -6,8 +6,9 @@ import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './guestForm.css'
 import AccountMadeScreen from './AccountMadeScreen';
+import { PageLayout } from "./components/PageLayout";
 
-export default function GuestForm(){
+export default function Guestform(){
   //state for storing our form data
   const [formData, setFormData] = useState({
     guestFirstName: '',
@@ -58,7 +59,8 @@ export default function GuestForm(){
   }}
     if (apiReturn === ""){
       return(
-        <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
+        <PageLayout>
+          <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
           <h1>Self Service Guest Portal</h1>
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
@@ -134,6 +136,7 @@ export default function GuestForm(){
               }
              </div>
            </Form>
+        </PageLayout>
       )
     } else if(apiReturn !== ""){
       return(

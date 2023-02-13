@@ -1,11 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import GuestFormNew from './GuestFormNew'
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { msalConfig } from "./authConfig";
+import Guestform from './Guestform';
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <GuestFormNew/>
+    <MsalProvider instance={msalInstance}>
+      <Guestform />
+    </MsalProvider>
   </React.StrictMode>
 );
