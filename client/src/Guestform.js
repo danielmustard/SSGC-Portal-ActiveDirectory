@@ -13,9 +13,6 @@ import ProfileContent from './ProfileContent';
 
 // owW8Q~Ie7RqrmC5O82VPCkHsIPWk3Qhgb9dJsaZX
 
-
-
-
 export default function Guestform(){
   const isAuthenticated = useIsAuthenticated();
   //state for storing our form data
