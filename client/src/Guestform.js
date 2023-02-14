@@ -146,7 +146,8 @@ export default function Guestform(){
     }else{
       return(<PageLayout>
         <UnauthenticatedTemplate>
-        <p>Sign in below to create an account for your guest to use for a limited time.</p>
+          {/* This only displays when user is unathenticated */}
+        <p>Sign in to create an account for your guest to use for a limited time.</p>
         </UnauthenticatedTemplate>
       </PageLayout>)
     }//else render something else
