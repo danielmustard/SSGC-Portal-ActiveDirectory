@@ -8,7 +8,47 @@ import './guestForm.css'
 import AccountMadeScreen from './AccountMadeScreen';
 import { PageLayout } from "./components/PageLayout";
 import { useIsAuthenticated } from "@azure/msal-react";
-import { UnauthenticatedTemplate } from "@azure/msal-react";
+import { UnauthenticatedTemplate, AuthenticatedTemplate, useMsal } from "@azure/msal-react";
+import { loginRequest } from "./authConfig";
+import { ProfileData } from "./components/ProfileData";
+import { callMsGraph } from "./graph";
+
+function ProfileContent() {
+  const { instance, accounts } = useMsal();
+  const [graphData, setGraphData] = useState(null);
+
+  const name = accounts[0] && accounts[0].name;
+
+  function RequestProfileData() {
+      const request = {
+          ...loginRequest,
+          account: accounts[0]
+      };
+
+      // Silently acquires an access token which is then attached to a request for Microsoft Graph data
+      instance.acquireTokenSilent(request).then((response) => {
+          callMsGraph(response.accessToken).then(response => setGraphData(response));
+          console.log(response)
+      }).catch((e) => {
+          instance.acquireTokenPopup(request).then((response) => {
+              callMsGraph(response.accessToken).then(response => setGraphData(response));
+          });
+      });
+  }
+
+  return (
+      <>
+          <h5 className="card-title">Welcome {name}</h5>
+          {graphData ? 
+              <ProfileData graphData={graphData} />
+              :
+              
+              <Button variant="secondary" onClick={RequestProfileData}>Request Profile Information</Button>
+          }
+      </>
+  );
+};
+
 
 export default function Guestform(){
   const isAuthenticated = useIsAuthenticated();
@@ -59,10 +99,15 @@ export default function Guestform(){
       if(data[key] === "") {
          return("Please fill all form fields!")
       }
+  
   }}
     if (apiReturn === "" && isAuthenticated === true){
       return(
+        
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
+            <AuthenticatedTemplate>
+                <ProfileContent />
+             </AuthenticatedTemplate> 
           <h1 class="display-5">Self Service Guest Portal</h1>
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
@@ -149,6 +194,7 @@ export default function Guestform(){
           {/* This only displays when user is unathenticated */}
         <p>Sign in to create an account for your guest to use for a limited time.</p>
         </UnauthenticatedTemplate>
+        
       </PageLayout>)
     }//else render something else
   
