@@ -8,46 +8,12 @@ import './guestForm.css'
 import AccountMadeScreen from './AccountMadeScreen';
 import { PageLayout } from "./components/PageLayout";
 import { useIsAuthenticated } from "@azure/msal-react";
-import { UnauthenticatedTemplate, AuthenticatedTemplate, useMsal } from "@azure/msal-react";
-import { loginRequest } from "./authConfig";
-import { ProfileData } from "./components/ProfileData";
-import { callMsGraph } from "./graph";
+import { UnauthenticatedTemplate, AuthenticatedTemplate } from "@azure/msal-react";
+import ProfileContent from './ProfileContent';
 
-function ProfileContent() {
-  const { instance, accounts } = useMsal();
-  const [graphData, setGraphData] = useState(null);
+// owW8Q~Ie7RqrmC5O82VPCkHsIPWk3Qhgb9dJsaZX
 
-  const name = accounts[0] && accounts[0].name;
 
-  function RequestProfileData() {
-      const request = {
-          ...loginRequest,
-          account: accounts[0]
-      };
-
-      // Silently acquires an access token which is then attached to a request for Microsoft Graph data
-      instance.acquireTokenSilent(request).then((response) => {
-          callMsGraph(response.accessToken).then(response => setGraphData(response));
-          console.log(response)
-      }).catch((e) => {
-          instance.acquireTokenPopup(request).then((response) => {
-              callMsGraph(response.accessToken).then(response => setGraphData(response));
-          });
-      });
-  }
-
-  return (
-      <>
-          <h5 className="card-title">Welcome {name}</h5>
-          {graphData ? 
-              <ProfileData graphData={graphData} />
-              :
-              
-              <Button variant="secondary" onClick={RequestProfileData}>Request Profile Information</Button>
-          }
-      </>
-  );
-};
 
 
 export default function Guestform(){
@@ -58,7 +24,7 @@ export default function Guestform(){
     guestSurname: '',
     guestPurpose:'',
     guestLocation:'',
-    guestTimeActive:''
+    guestTimeActive:'',
   })
 
   //state for storing any errors that we want to present to frontend
@@ -99,6 +65,9 @@ export default function Guestform(){
       if(data[key] === "") {
          return("Please fill all form fields!")
       }
+
+    //part for displaying user data on the form
+    
   
   }}
     if (apiReturn === "" && isAuthenticated === true){
