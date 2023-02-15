@@ -32,16 +32,6 @@ export default function ProfileContent() {
         });
     }  
     return (
-        <>
-            <h5 className="card-title">Welcome {name}</h5>
-            
-            
-             {graphData ?
-              /* Passing profile data gatered from MS grap into JSX Display element*/
-                <ProfileData graphData={graphData} /> 
-                :
-                <Button variant="secondary" /*onClick={RequestProfileData}*/>Request Profile Information</Button>
-            } 
-        </>
-    );
+        graphData
+    )
   };

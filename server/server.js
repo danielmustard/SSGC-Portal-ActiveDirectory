@@ -14,9 +14,10 @@ app.use(cors({ origin: "http://localhost:3000" }));
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 
 app.post('/formData',async (req, res) =>{
-   await makeUser(req.body).then (data =>{
-     res.send(data)
-   })
+  console.log(req.body);
+  //  await makeUser(req.body).then (data =>{
+  //    res.send(data)
+  //  })
 })
 
 
