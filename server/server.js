@@ -19,9 +19,6 @@ app.post('/formData',async (req, res) =>{
   //    res.send(data)
   //  })
 })
-
-
-
 //User should only be able to perform any of the steps below after they have authenticated with AAD, !SET THIS UP LATER
 
 function jsDateToADDate(days) {

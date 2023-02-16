@@ -10,7 +10,7 @@ export const msalConfig = {
     }
   };
   
-  // Add scopes here for ID token to be used at Microsoft identity platform endpoints.
+  // This gets us the 'guest create token' we can then try to 
   export const loginRequest = {
    scopes: ["api://923f0d56-47a2-4677-a426-9dea5042cdf8/guest.create"]
   };

@@ -18,11 +18,7 @@ import { loginRequest } from "./authConfig";
 // owW8Q~Ie7RqrmC5O82VPCkHsIPWk3Qhgb9dJsaZX
 
 export default function Guestform(){
-
-  const { instance, accounts } = useMsal();
-
-  const [graphData, setGraphData] = useState(null);
-
+  
   const isAuthenticated = useIsAuthenticated();
 
   //state for storing our form data
@@ -36,58 +32,64 @@ export default function Guestform(){
     guestTimeActive:'',
   })
 
-
+  const { instance, accounts } = useMsal();
   //on click of form submit button we also want to get our JWT and send it to our backend to validate that user sending data is authorised to.
-  const requestProfileData = () => {
-        const request = {
-            ...loginRequest,
-            account: accounts[0]
-        };
+
   
-        // Silently acquires an access token which is then attached to a request for Microsoft Graph data
-        instance.acquireTokenSilent(request).then((response) => {
-            //we dont call ms graph with this token although we could, we send to backend to be validate
-            console.log(response)
-            setGraphData(response);
-        })
+  const requestProfileData = async () => {
+    const request = {
+      ...loginRequest,
+      account: accounts[0]
+    };
+    let token = {};
+    try {
+      // Silently acquires an access token which is then attached to a request for Microsoft Graph data
+      const response = await instance.acquireTokenSilent(request);
+      console.log(response)
+      token = response;
+      // console.log(token)
+    } catch (error) {
+      console.log(error);
     }
+    return Promise.resolve(token);
+  }
+ 
 
   //state for storing any errors that we want to present to frontend
   const [error, setError] = useState("");
 
   const [apiReturn, setAPIReturn] = useState("");
 
+  
+
   //stores our form data inside the USE STATE
   const handleChange = (event) =>{
     setFormData({...formData, [event.target.name]: event.target.value})
   }
-
-  const handleSubmit = (event) =>{
-
-    event.preventDefault();
-    //here we run our axios code to submit our data to API
-    requestProfileData();
-
-    //validate incoming data, check if any values are empty
+  
+  const handleSubmit = async (e) =>{
+    e.preventDefault();
     
-    if (validateInput(formData)){
-      setError(validateInput(formData))
-    }else{
-      postData(formData,graphData)
-    }
+    const token = await requestProfileData();
+      if (validateInput(formData)){
+        setError(validateInput(formData))
+      }else{ //we only want to post data if graphdata is not blank 
+        postData(formData,token)
+      }
+      //validate incoming data, check if any values are empty
   }
 
   //after our form data input has been validated we then post the data to our endpoint
   const postData = async(data,token) =>{
-    
-    const json = {token}
-    
+    const json = {
+      guest : data,
+      azureToken : token.idToken
+    }
     axios.post('http://192.168.1.202:5000/formData', json)
       .then(response =>{
         console.log(response.data)
         setAPIReturn(response.data)
       })
-      
       .catch(error =>{
         error.toString() === "AxiosError: Network Error" ? setError("Unable to connect to LDAP server") : setError(error.toString());
       })
@@ -98,12 +100,10 @@ export default function Guestform(){
       if(data[key] === "") {
          return("Please fill all form fields!")
       }
-
-    
+  
   }}
-    if (apiReturn === "" && isAuthenticated === true){
-      return(
-        
+    if (apiReturn === "" && isAuthenticated === true){      
+      return(  
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
             <AuthenticatedTemplate>
 
