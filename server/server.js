@@ -2,8 +2,8 @@ const express = require('express')
 const cors = require("cors");
 const ldap = require('ldapjs')
 const fs = require('fs');
-const e = require('express');
-
+const checkAuth = require('./auth/checkAuthMiddleware');
+const checkAuthMiddleware = require('./auth/checkAuthMiddleware');
 
 const app = express()
 
@@ -13,12 +13,18 @@ app.use(cors({ origin: "http://localhost:3000" }));
 
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 
-app.post('/formData',async (req, res) =>{
-  console.log(req.body);
+app.post('/formData',(req,res) =>{
+  checkAuth,(res,req,next)
+  checkAuthMiddleware(req.body,res,next)
+});
+
+// async (req, res) =>{
+//   console.log(req.body);
+// })
   //  await makeUser(req.body).then (data =>{
   //    res.send(data)
   //  })
-})
+
 //User should only be able to perform any of the steps below after they have authenticated with AAD, !SET THIS UP LATER
 
 function jsDateToADDate(days) {

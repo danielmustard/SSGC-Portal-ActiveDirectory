@@ -83,7 +83,7 @@ export default function Guestform(){
   const postData = async(data,token) =>{
     const json = {
       guest : data,
-      azureToken : token.idToken
+      azureToken : token.idToken //we only send JWT portion to backend
     }
     axios.post('http://192.168.1.202:5000/formData', json)
       .then(response =>{
