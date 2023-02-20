@@ -32,7 +32,9 @@ module.exports = async (idToken) => {
     //first decode the jwt
     let parsed = jwt.decode(idToken, { complete: true });
 
-    console.log(parsed)
+    if (parsed == null){
+        throw Error('No token value passed in, nothing to validate')
+    }
 
     //get the unique id of the signing key
     let kid = parsed.header.kid;

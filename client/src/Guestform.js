@@ -73,7 +73,7 @@ export default function Guestform(){
     const token = await requestProfileData();
       if (validateInput(formData)){
         setError(validateInput(formData))
-      }else{ //we only want to post data if graphdata is not blank 
+      }else{ //we only want to post data if graphdata is not blank]
         postData(formData,token)
       }
       //validate incoming data, check if any values are empty
@@ -85,6 +85,7 @@ export default function Guestform(){
       guest : data,
       azureToken : token.idToken //we only send JWT portion to backend
     }
+    console.log(json)
     axios.post('http://192.168.1.202:5000/formData', json)
       .then(response =>{
         console.log(response.data)

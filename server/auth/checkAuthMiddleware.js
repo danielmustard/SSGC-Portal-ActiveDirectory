@@ -3,8 +3,8 @@ const checkAuth = require('./checkAuth');
 module.exports = async (req,res,next) => {
     let decodedAndVerified = null;
     try {
-        console.log(req)
-        idToken = req.azureToken
+        console.log(req.body)
+        idToken = req.body.azureToken
 
         //let idToken = auth.substring(7);//removes "Bearer " from the Authorization header
         let result = await checkAuth(idToken); //await the result of our authentication check

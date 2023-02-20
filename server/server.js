@@ -2,7 +2,6 @@ const express = require('express')
 const cors = require("cors");
 const ldap = require('ldapjs')
 const fs = require('fs');
-const checkAuth = require('./auth/checkAuthMiddleware');
 const checkAuthMiddleware = require('./auth/checkAuthMiddleware');
 
 const app = express()
@@ -13,9 +12,15 @@ app.use(cors({ origin: "http://localhost:3000" }));
 
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 
-app.post('/formData',(req,res) =>{
-  checkAuth,(res,req,next)
-  checkAuthMiddleware(req.body,res,next)
+//middleware, so any incoming request is validated:
+
+app.use(checkAuthMiddleware) //only once azure token has been verified do we move to next step below
+
+app.post('/formData', async (req,res) =>{
+  console.log('NEXT STEP :)')
+  await makeUser(req.body.guest).then (data =>{
+    res.send(data)
+  })
 });
 
 // async (req, res) =>{
@@ -112,7 +117,7 @@ async function makeUser(guest){
         reconnect: true //if connection is lost with ldap server we auto reconnect
       });
       //passing credentials
-      client.bind('CN=guestAdm,OU=Guests,DC=dandomain,DC=com', 'Pscxkufx1', (err) => {
+      client.bind('CN=guestAdmin2,OU=Guests,DC=dandomain,DC=com', 'Pscxkufx1', (err) => {
         if (err){
             console.log(err)
             err + errorLog;
