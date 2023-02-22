@@ -88,8 +88,13 @@ export default function Guestform(){
     console.log(json)
     axios.post('http://192.168.1.202:5000/formData', json)
       .then(response =>{
-        console.log(response.data)
-        setAPIReturn(response.data)
+          if(response.data.status === "409"){
+            console.log('error')
+          }else{
+            setAPIReturn(response.data)
+            console.log(response.data)
+          }
+          
       })
       .catch(error =>{
         error.toString() === "AxiosError: Network Error" ? setError("Unable to connect to LDAP server") : setError(error.toString());
