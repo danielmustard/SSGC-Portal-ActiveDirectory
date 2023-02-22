@@ -88,8 +88,8 @@ export default function Guestform(){
     console.log(json)
     axios.post('http://192.168.1.202:5000/formData', json)
       .then(response =>{
-          if(response.data.status === "409"){
-            console.log('error')
+          if(response.data.code === "ETIMEDOUT"){
+            setError('Connection to LDAP server timed out')
           }else{
             setAPIReturn(response.data)
             console.log(response.data)

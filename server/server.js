@@ -15,13 +15,14 @@ var tlsOptions = {
   ca: [ fs.readFileSync('./certs/ca.crt') ]
   };
 
-const ldapClient = new Ldap({
-  url: 'ldaps://dandc1.dandomain.com',
-  tlsOptions: tlsOptions,
-  bindDN: dn,
-  bindCredentials: bindPassword,
-  reconnect: true, //if connection is lost with ldap server we auto reconnect
-})
+
+ldapClient = new Ldap({
+    url: 'ldaps://dandc1.dandomain.com',
+    tlsOptions: tlsOptions,
+    bindDN: dn,
+    bindCredentials: bindPassword,
+  });
+
 
 //allows us to parse incoming json data from body
 app.use(express.json());
@@ -34,14 +35,18 @@ app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 app.use(checkAuthMiddleware) //only once azure token has been verified do we move to next step below
 
 app.post('/formData', async (req,res) =>{
-  await makeAdUser(req.body.guest)
-  // await makeUser(req.body.guest).then (data =>{
-  //   res.send(data)
-  // })
+  try{
+    await makeAdUser(req.body.guest).then((data)=>{
+      res.send(data)
+    })
+  }catch(err){
+    console.log(err);
+  }
 });
 
-
  function jsDateToADDate(days) {
+  //this function takes a number of days value and then adds that onto current day(today), it then returns a human readable date and AD Epoch time
+  //so if today is the first and the function recieves 2, we add on two days from today and work the date out in AD time
    days = parseInt(days);
    //number of days to be active passed into 
    //todays date
@@ -72,85 +77,6 @@ function generatePassword() {
   return randomPassword;
 }
 
-// async function makeUser(guest){
-//     let adDisplayName = `(Guest) ${guest.guestFirstName} ${guest.guestSurname}`
-
-//     //including a random integer at end of guest account to avoid possible clashes
-//     let username = `gst_${guest.guestSurname}${Math.floor(Math.random() * 1001)}`
-
-//     let expiryTime = jsDateToADDate(guest.guestTimeActive)
-
-//     console.log(expiryTime)
-//     randomPassword = generatePassword();
-    
-//     //console.log(password())
-//     //need to use unicode password to send to AD:
-//     unicodePwd = Buffer.from('"'+randomPassword+'"',"utf16le").toString();
-    
-//     //data to pass to AD: , we cannot
-//      var entry = {
-//          displayName: adDisplayName,   
-//          sAMAccountName: username,   
-//          name: guest.guestFirstName,
-//          unicodePwd: unicodePwd,
-//          userAccountControl:'512', //this makes the account active
-//          accountExpires: expiryTime.adTimeValue,
-//          sn: guest.guestSurname,
-//          givenName: guest.guestFirstName,
-//          userPrincipalName: `${username}@dandomain.com`,    
-//          company: "dandomain.com",   
-//          info: `GUEST ACCOUNT, Purpose: ${guest.purposeOfAccess}`,
-//          department: "GUEST",   
-//          objectClass: ['organizationalPerson', 'person', 'top', 'user'],
-//          description: 'Guest account created: ' + (new Date()).toLocaleString()
-//        }
-//       //new user DN decides ou that user will go into, this case we have OU called GUEST
-//       const newDN = `cn=${adDisplayName},OU=Guests,DC=dandomain,DC=com`
-      
-//       //passing credentials
-//       client.bind('CN=guestAdmin2,OU=Guests,DC=dandomain,DC=com', 'Pscxkufx1', (err) => {
-//         if (err){
-//             console.log(err)
-//             err + errorLog;
-//         }else{
-//             console.log("Binded to LDAP using provided credentials")
-//         }
-//       });
-
-//        client.add ( newDN, entry, (error)=>{
-//          // console.log(result)
-//          if (error){
-//            console.log(error.toString())
-//            errorLog = error.toString();
-//          }else{
-//            console.log('Generated account with no errors')
-//            errorLog = false //no errors so we update error log
-//            //closing connection with ldap server, prevents timeout crash from server
-//            client.unbind()
-//            client.destroy();
-//          }
-//        });
-//       //handling any ldap client connection error (stops server from crashing if AD terminated LDAP connection)
-//       client.on('error', (err) => {
-//         // this will be your ECONNRESET message
-//         errorLog = err.toString();        
-//       })
-      
-//   if (errorLog == false){
-//     return {
-//       status: 201,
-//       username: `${username}`,
-//       password: `${randomPassword}`,
-//       accountExpires: expiryTime.humanReadableTime
-//     }
-    
-//   }else{
-//     return {
-//       status: 409
-//     }
-//   }
-// }
-
 async function makeAdUser(guest){
 
   let adDisplayName = `(Guest) ${guest.guestFirstName} ${guest.guestSurname}`
@@ -170,7 +96,7 @@ async function makeAdUser(guest){
     sAMAccountName: username,   
     name: guest.guestFirstName,
     unicodePwd: unicodePwd,
-    userAccountControl:'512', //this makes the account active
+    userAccountControl:'512', //this makes the account active in AD, by default its disabled
     accountExpires: expiryTime.adTimeValue,
     sn: guest.guestSurname,
     givenName: guest.guestFirstName,
@@ -182,10 +108,18 @@ async function makeAdUser(guest){
     description: 'Guest account created: ' + (new Date()).toLocaleString()
     }
 
+    let result;
     try{
-      ldapClient.add(newDN,entry)
+      await ldapClient.add(newDN,entry).then(()=>{
+        result = {
+          status: 201,
+          username: `${username}`,
+          password: `${randomPassword}`,
+          accountExpires: expiryTime.humanReadableTime
+          }
+      })
     }catch(err){
-      console.log(err)
+      result = err;
     }
-}
-    
+    return result;
+  }
