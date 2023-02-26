@@ -1,13 +1,11 @@
 const express = require('express')
+require("dotenv").config({path:'./.env.dev'})
 const cors = require("cors");
 const Ldap = require('ldap-async').default
 const fs = require('fs');
 const checkAuthMiddleware = require('./auth/checkAuthMiddleware');
 const app = express()
 
-const dn = "CN=guestAdmin2,OU=Guests,DC=dandomain,DC=com"
-  
-const bindPassword = "Pscxkufx1"
 
 //use CA to make tls connection
 var tlsOptions = {
@@ -17,11 +15,11 @@ var tlsOptions = {
 
 
 ldapClient = new Ldap({
-    url: 'ldaps://dandc1.dandomain.com',
+    url: process.env.LDAP_URL,
     tlsOptions: tlsOptions,
-    bindDN: dn,
-    bindCredentials: bindPassword,
-    reconnect:true
+    bindDN: process.env.AD_USERNAME,
+    bindCredentials: process.env.AD_PASSWORD,
+    reconnect:true //if ldap connection is closed we auto-reconnect
   });
 
 //allows us to parse incoming json data from body
@@ -85,9 +83,11 @@ async function makeAdUser(guest){
 
   unicodePwd = Buffer.from('"'+randomPassword+'"',"utf16le").toString();
 
-  const newDN = `cn=${adDisplayName},OU=Guests,DC=dandomain,DC=com`
+  
 
   let username = `gst_${guest.guestSurname}${Math.floor(Math.random() * 1001)}`
+
+  const newDN = `cn=${username},${process.env.AD_CONTAINER}`
 
   let expiryTime = jsDateToADDate(guest.guestTimeActive)
 
@@ -102,7 +102,7 @@ async function makeAdUser(guest){
     givenName: guest.guestFirstName,
     userPrincipalName: `${username}@dandomain.com`,    
     company: "dandomain.com",   
-    info: `GUEST ACCOUNT, Purpose: ${guest.purposeOfAccess}`,
+    info: `GUEST ACCOUNT, Purpose: ${guest.guestPurpose}`,
     department: "GUEST",   
     objectClass: ['organizationalPerson', 'person', 'top', 'user'],
     description: 'Guest account created: ' + (new Date()).toLocaleString()
