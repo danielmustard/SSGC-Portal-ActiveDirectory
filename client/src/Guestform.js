@@ -12,7 +12,8 @@ import { UnauthenticatedTemplate, AuthenticatedTemplate } from "@azure/msal-reac
 import { useMsal } from "@azure/msal-react";
 //import { callMsGraph } from "./graph";
 import { loginRequest } from "./authConfig";
-
+import { LoadSpinner } from './components/LoadSpinner'
+ 
 //import ProfileContent from './ProfileContent';
 
 // owW8Q~Ie7RqrmC5O82VPCkHsIPWk3Qhgb9dJsaZX
@@ -59,6 +60,7 @@ export default function Guestform(){
   const [error, setError] = useState("");
 
   const [apiReturn, setAPIReturn] = useState("");
+  const [isLoading, setIsLoading] = useState();
 
   
 
@@ -69,10 +71,11 @@ export default function Guestform(){
   
   const handleSubmit = async (e) =>{
     e.preventDefault();
-    
+    setIsLoading(true);
     const token = await requestProfileData();
       if (validateInput(formData)){
         setError(validateInput(formData))
+        setIsLoading(false)
       }else{ //we only want to post data if graphdata is not blank]
         postData(formData,token)
       }
@@ -86,12 +89,14 @@ export default function Guestform(){
       azureToken : token.idToken //we only send JWT portion to backend
     }
     console.log(json)
-    axios.post('http://192.168.1.202:5000/formData', json)
+    axios.post('http://localhost:5000/formData', json)
       .then(response =>{
-          if(response.data.code === "ETIMEDOUT"){
-            setError('Connection to LDAP server timed out')
+          if(response.data.status !== 201){ //if response status is not 201 there must be an error of some kind
+            setError(`Error: ${response.data.lde_message}`)
+            setIsLoading(false)
           }else{
             setAPIReturn(response.data)
+            setIsLoading(false)
             console.log(response.data)
           }
           
@@ -176,13 +181,19 @@ export default function Guestform(){
                     <option key = 'blankChoice' hidden value> --Select Duration-- </option>
                     <option value={1}>1 Day</option>
                     <option value={2}>2 Days</option>
-                    <option value={5}>5 Days</option>
-                    <optgroup label="For custom time requirements please contact IT Services"></optgroup>
+                    <optgroup label="Guest will expire exactly 24 or 48 hours after submission"></optgroup>
                   </Form.Select>
                </Form.Group>
+               
              <Button variant="primary" type="submit">
                Submit
-             </Button>
+               {
+              isLoading === true &&
+              <div style={{display:'flex',justifyContent:'center'}}>
+                <LoadSpinner/>
+              </div>
+             }
+             </Button> 
              <hr></hr>
              {error !== "" &&
               <Alert key="danger" variant='danger'>{error}</Alert>  

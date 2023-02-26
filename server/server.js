@@ -21,8 +21,8 @@ ldapClient = new Ldap({
     tlsOptions: tlsOptions,
     bindDN: dn,
     bindCredentials: bindPassword,
+    reconnect:true
   });
-
 
 //allows us to parse incoming json data from body
 app.use(express.json());
@@ -120,6 +120,7 @@ async function makeAdUser(guest){
       })
     }catch(err){
       result = err;
+      console.log(err)
     }
     return result;
   }
