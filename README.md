@@ -4,6 +4,11 @@ Self Service Guest Creation Portal (SSGC Portal) is a tool built to create Tempo
 
 I also plan to implement a database to hold guest creation data. 
 
+## Demo of Portal
+![Demo Animation](../assets/working-process1.gif?raw=true)
+
+
+
 ## Features
 - Connect to Active Directory and create new guest account
 - Automatically sets Account expiry date
