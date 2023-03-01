@@ -1,22 +1,28 @@
+import React, { useState } from 'react'
+
+//axios for calling API
+import axios from 'axios'
+
+//Bootstrap imports
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
-import React, { useState } from 'react'
-import axios from 'axios'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './guestForm.css'
-import AccountMadeScreen from './AccountMadeScreen';
-import { PageLayout } from "./components/PageLayout";
+import { LoadSpinner } from 'src/components/LoadSpinner'
+
+
+//CSS imports
+
+import 'src/css/guestForm.css'
+
+import AccountMadeScreen from 'src/pages/AccountMadeScreen';
+import { PageLayout } from "src/components/PageLayout";
+
 import { useIsAuthenticated } from "@azure/msal-react";
 import { UnauthenticatedTemplate, AuthenticatedTemplate } from "@azure/msal-react";
 import { useMsal } from "@azure/msal-react";
-//import { callMsGraph } from "./graph";
-import { loginRequest } from "./authConfig";
-import { LoadSpinner } from './components/LoadSpinner'
- 
-//import ProfileContent from './ProfileContent';
 
-// owW8Q~Ie7RqrmC5O82VPCkHsIPWk3Qhgb9dJsaZX
+import { loginRequest } from "src/msal/authConfig";
+
 
 export default function Guestform(){
   
@@ -116,9 +122,7 @@ export default function Guestform(){
     if (apiReturn === "" && isAuthenticated === true){      
       return(  
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
-            <AuthenticatedTemplate>
-
-             </AuthenticatedTemplate> 
+            
           <h1 class="display-5">Self Service Guest Portal</h1>
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)

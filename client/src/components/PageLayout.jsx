@@ -1,7 +1,7 @@
 import React from "react";
 import { useIsAuthenticated } from "@azure/msal-react";
-import { SignInButton } from "./SignInButton";
-import '../guestForm.css'
+import { SignInButton } from "src/components/SignInButton";
+import 'src/css/guestForm.css'
 
 /**
  * Renders the navbar component with a sign-in button if a user is not authenticated
