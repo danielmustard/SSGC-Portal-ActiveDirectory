@@ -1,8 +1,8 @@
 export const msalConfig = {
     auth: {
-      clientId: "923f0d56-47a2-4677-a426-9dea5042cdf8",
-      authority: "https://login.microsoftonline.com/832d814b-b790-4ea3-981d-6b2e6af9794c", // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
-      redirectUri: "http://localhost:5173",
+      clientId: import.meta.env.VITE_APPLICATION_ID,
+      authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`, // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
+      redirectUri: import.meta.env.VITE_REDIRECT_URI,
     },
     cache: {
       cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -12,7 +12,7 @@ export const msalConfig = {
   
   // This gets us the 'guest create token' we can then try to 
   export const loginRequest = {
-   scopes: ["api://923f0d56-47a2-4677-a426-9dea5042cdf8/guest.create"]
+   scopes: [import.meta.env.VITE_API_SCOPES]
   };
   
   // Add the endpoints here for Microsoft Graph API services you'd like to use.

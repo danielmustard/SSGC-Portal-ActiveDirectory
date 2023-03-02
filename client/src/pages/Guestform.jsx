@@ -76,6 +76,7 @@ export default function Guestform(){
   }
   
   const handleSubmit = async (e) =>{
+    console.log(import.meta.env.VITE_REDIRECT_URI)
     e.preventDefault();
     setIsLoading(true);
     const token = await requestProfileData();

@@ -24,7 +24,7 @@ ldapClient = new Ldap({
 
 //allows us to parse incoming json data from body
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:5173" }));
 
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 
