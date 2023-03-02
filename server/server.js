@@ -19,12 +19,13 @@ ldapClient = new Ldap({
     tlsOptions: tlsOptions,
     bindDN: process.env.AD_USERNAME,
     bindCredentials: process.env.AD_PASSWORD,
-    reconnect:true //if ldap connection is closed we auto-reconnect
+    reconnect:true, //if ldap connection is closed we auto-reconnect
+    //if we notice errors with number of concurrent ldap connections we can increase poolSize value
   });
 
 //allows us to parse incoming json data from body
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost:443" }));
 
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
 
