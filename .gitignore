@@ -8,4 +8,4 @@
 certificate.pem
 key.pem
 docker-compose-DevVersion.yml
-ca.crt
+/server/certs/ca.crt
