@@ -16,6 +16,7 @@ export default function ProfileContent() {
     const name = accounts[0] && accounts[0].name;
   
     function RequestProfileData() {
+        
         const request = {
             ...loginRequest,
             account: accounts[0]
@@ -24,7 +25,6 @@ export default function ProfileContent() {
         // Silently acquires an access token which is then attached to a request for Microsoft Graph data
         instance.acquireTokenSilent(request).then((response) => {
             callMsGraph(response.accessToken).then(response => setGraphData(response));
-            console.log(response)
         }).catch((e) => {
             instance.acquireTokenPopup(request).then((response) => {
                 callMsGraph(response.accessToken).then(response => setGraphData(response));

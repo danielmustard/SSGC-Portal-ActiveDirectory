@@ -1,10 +1,15 @@
 const express = require('express')
-require("dotenv").config({path:'./.env.dev'})
+require("dotenv")
 const cors = require("cors");
 const Ldap = require('ldap-async').default
 const fs = require('fs');
 const checkAuthMiddleware = require('./auth/checkAuthMiddleware');
 const app = express()
+
+//if in dev mode:
+if (process.env.NODE_ENV == "dev"){
+  require("dotenv").config({path:'./.env.dev'})
+}
 
 
 //use CA to make tls connection
@@ -19,15 +24,23 @@ ldapClient = new Ldap({
     tlsOptions: tlsOptions,
     bindDN: process.env.AD_USERNAME,
     bindCredentials: process.env.AD_PASSWORD,
-    reconnect:true, //if ldap connection is closed we auto-reconnect
-    //if we notice errors with number of concurrent ldap connections we can increase poolSize value
+    reconnect:{
+      initialDelay:100,
+      maxDelay:1000,
+      failAfter:10
+    }
+    
   });
 
+  
 //allows us to parse incoming json data from body
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:443" }));
+app.use(cors({ origin: "https://client" })); //incoming connection will always come from docker client container
+
 
 app.listen(5000, ()=> {console.log("Server Started on port 5000")})
+
+
 
 //middleware, so any incoming request is validated:
 
@@ -60,18 +73,23 @@ app.post('/formData', async (req,res) =>{
    }
  }
 
-function generatePassword() {
+ function generatePassword() {
   // Character set to be used for password generation
   const charSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  // Set of special characters to choose from
+  const specialChars = '!#$%&()*+,-./:;<=>?@[]^_{}~';
   // Variable to store the generated password
   let randomPassword = '';
-  // Loop to generate the password 8 characters long
-  for (let i = 0; i < 11; i++) {
+  // Loop to generate the password 10 characters long
+  for (let i = 0; i < 10; i++) {
     // Generate a random index for the character set
     let randomPoz = Math.floor(Math.random() * charSet.length);
     // Add the character at the randomly generated index to the password
     randomPassword += charSet.substring(randomPoz, randomPoz + 1);
   }
+  // Add a random special character to the password
+  let randomPoz = Math.floor(Math.random() * specialChars.length);
+  randomPassword += specialChars.substring(randomPoz, randomPoz + 1);
   // Return the generated password
   return randomPassword;
 }
@@ -118,6 +136,7 @@ async function makeAdUser(guest){
           password: `${randomPassword}`,
           accountExpires: expiryTime.humanReadableTime
           }
+        ldapClient.close() //need to close connection each time account is made to stop LDAP bind from timing out
       })
     }catch(err){
       result = err;

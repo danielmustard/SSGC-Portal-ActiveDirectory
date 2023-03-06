@@ -8,8 +8,6 @@ export default defineConfig({
     alias: {
       src: "/src",
     },
-  host: true, //needed for docker container port mapping to work
-  strictPort: true,
   port: 443,
   },
 })

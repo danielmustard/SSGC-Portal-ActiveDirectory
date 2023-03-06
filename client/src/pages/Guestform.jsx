@@ -52,9 +52,7 @@ export default function Guestform(){
     try {
       // Silently acquires an access token which is then attached to a request for Microsoft Graph data
       const response = await instance.acquireTokenSilent(request);
-      console.log(response)
       token = response;
-      // console.log(token)
     } catch (error) {
       console.log(error);
     }
@@ -76,7 +74,6 @@ export default function Guestform(){
   }
   
   const handleSubmit = async (e) =>{
-    console.log(import.meta.env.VITE_REDIRECT_URI)
     e.preventDefault();
     setIsLoading(true);
     const token = await requestProfileData();
@@ -95,8 +92,10 @@ export default function Guestform(){
       guest : data,
       azureToken : token.idToken //we only send JWT portion to backend
     }
-    console.log(json)
-    axios.post('http://localhost:5000/formData', json)
+  
+    
+    
+    axios.post(`${import.meta.env.BASE_URL}formData`, json)
       .then(response =>{
           if(response.data.status !== 201){ //if response status is not 201 there must be an error of some kind
             setError(`Error: ${response.data.lde_message}`)
@@ -104,12 +103,13 @@ export default function Guestform(){
           }else{
             setAPIReturn(response.data)
             setIsLoading(false)
-            console.log(response.data)
+            
           }
           
       })
       .catch(error =>{
         error.toString() === "AxiosError: Network Error" ? setError("Unable to connect to LDAP server") : setError(error.toString());
+        setIsLoading(false) // If we get error string back dont infinite loop loading 
       })
   } 
 
@@ -190,7 +190,7 @@ export default function Guestform(){
                   </Form.Select>
                </Form.Group>
                
-             <Button variant="primary" type="submit">
+             <Button variant="primary" type="submit" disabled={isLoading}>
                Submit
                {
               isLoading === true &&

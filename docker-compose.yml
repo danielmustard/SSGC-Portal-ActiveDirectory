@@ -1,0 +1,23 @@
+version: '3'
+services:
+  server:
+    build: server/
+    ports:
+      - :5000 ##we only need to expose port 5000 internally as we are using docker networking for communication
+    environment:
+      LDAP_URL: ldaps://ldaps.example.com ## example: ldaps://exampleDomain.com
+      AD_USERNAME: exampleUsername ##This must be full distinguished name example: "CN=exampleUsername,OU=exampleOU,DC=example,DC=com"
+      AD_PASSWORD: eXaMpLePaSsWoRd #Ad Account Password
+      AD_CONTAINER: "OU=Guests,DC=example,DC=com" ## (Include Double Quotes) The distinguished name of the OU you would like your guest accounts to live in
+      AZURE_APPLICATION_ID: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx ##Application ID of the azure app setup in your tenant
+  client:
+    build:
+      context: client/
+      args:
+        VITE_APPLICATION_ID: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx ##Application ID of the azure app setup in your tenant
+        VITE_TENANT_ID: xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx ##Azure AD Tenant ID 
+        VITE_API_SCOPE: api://xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/guest.create ##Application Scope API URL
+    ports:
+      - 443:443
+    depends_on:
+      - server
