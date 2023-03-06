@@ -3,6 +3,7 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "src/msal/authConfig";
 import Button from "react-bootstrap/Button";
 
+import '/src/css/index.css'
 
 //Renders a button which, when selected, will redirect the page to the login prompt
 
