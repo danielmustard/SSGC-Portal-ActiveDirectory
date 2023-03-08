@@ -125,7 +125,7 @@ export default function Guestform(){
       return(  
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
             
-          {/* <h1 class="display-5">Self Service Guest Portal</h1> */}
+          <h1 class="display-5">Self Service Guest Portal</h1> 
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
               </Alert>
@@ -217,7 +217,6 @@ export default function Guestform(){
           {/* This only displays when user is unathenticated */}
         <p>Sign in to create an account for your guest to use for a limited time.</p>
         </UnauthenticatedTemplate>
-        
       </PageLayout>)
     }//else render something else
 
