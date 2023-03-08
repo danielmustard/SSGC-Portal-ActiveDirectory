@@ -28,6 +28,7 @@ export default function ProfileContent() {
         }).catch((e) => {
             instance.acquireTokenPopup(request).then((response) => {
                 callMsGraph(response.accessToken).then(response => setGraphData(response));
+                console.log(response)
             });
         });
     }  

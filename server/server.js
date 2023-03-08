@@ -6,9 +6,18 @@ const fs = require('fs');
 const checkAuthMiddleware = require('./auth/checkAuthMiddleware');
 const app = express()
 
+let port;
+let corsClient;
+
 //if in dev mode:
-if (process.env.NODE_ENV == "dev"){
+if (process.env.NODE_ENV == 1){
   require("dotenv").config({path:'./.env.dev'})
+  port = 5001
+  corsClient = "http://localhost:5173"
+  console.log("Running in Dev mode")
+}else{
+  port = 5000
+  corsClient = "https://client"
 }
 
 
@@ -35,10 +44,10 @@ ldapClient = new Ldap({
   
 //allows us to parse incoming json data from body
 app.use(express.json());
-app.use(cors({ origin: "https://client" })); //incoming connection will always come from docker client container
+app.use(cors({ origin: corsClient })); //incoming connection will always come from docker client container
 
 
-app.listen(5000, ()=> {console.log("Server Started on port 5000")})
+app.listen(port, ()=> {console.log(`Server Started on port ${port}`)})
 
 
 

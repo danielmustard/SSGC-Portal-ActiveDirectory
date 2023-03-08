@@ -3,11 +3,13 @@ FROM node:18-alpine3.17 as build
 
 WORKDIR /app
 
+
 COPY . /app
 
 ARG VITE_APPLICATION_ID
 ARG VITE_TENANT_ID
 ARG VITE_API_SCOPE
+
 
 #Adding docker enviroment variables into .env file, had to do it this way because vite is unable to access process.env values directly
 RUN printf "VITE_APPLICATION_ID=%s\n" "${VITE_APPLICATION_ID}" >> .env && \

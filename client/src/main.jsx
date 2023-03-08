@@ -10,11 +10,12 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 //guest form import*
 import Guestform from 'src/pages/Guestform';
+import Adminpage from 'src/pages/AdminPage'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>
-      <Guestform/>
+      {window.location.pathname == "/admin" ? <Adminpage/> : <Guestform/>}
     </MsalProvider>
   </React.StrictMode>,
 )

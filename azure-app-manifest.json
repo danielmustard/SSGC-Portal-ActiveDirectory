@@ -1,0 +1,88 @@
+{
+	"id": "MANIFEST_ID",
+	"acceptMappedClaims": null,
+	"accessTokenAcceptedVersion": null,
+	"addIns": [],
+	"allowPublicClient": null,
+	"appId": "APP_ID",
+	"appRoles": [
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "Guest Admins will have the ability to manage guests",
+			"displayName": "Guest Admins",
+			"id": "a1850dc9-1646-4083-a374-4737148addea",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "guest.admin"
+		},
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "Guest makers will have the ability to create new guest accounts",
+			"displayName": "Guest Makers",
+			"id": "379a7a60-7799-48e0-8708-e7596d4c4b62",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "Guest.Makers"
+		}
+	],
+	"oauth2AllowUrlPathMatching": false,
+	"createdDateTime": "2023-03-07T19:18:36Z",
+	"description": null,
+	"certification": null,
+	"disabledByMicrosoftStatus": null,
+	"groupMembershipClaims": null,
+	"identifierUris": [],
+	"informationalUrls": {
+		"termsOfService": null,
+		"support": null,
+		"privacy": null,
+		"marketing": null
+	},
+	"keyCredentials": [],
+	"knownClientApplications": [],
+	"logoUrl": null,
+	"logoutUrl": null,
+	"name": "Guest Portal Example",
+	"notes": null,
+	"oauth2AllowIdTokenImplicitFlow": false,
+	"oauth2AllowImplicitFlow": false,
+	"oauth2Permissions": [],
+	"oauth2RequirePostResponse": false,
+	"optionalClaims": null,
+	"orgRestrictions": [],
+	"parentalControlSettings": {
+		"countriesBlockedForMinors": [],
+		"legalAgeGroupRule": "Allow"
+	},
+	"passwordCredentials": [],
+	"preAuthorizedApplications": [],
+	"publisherDomain": "mustard.ovh",
+	"replyUrlsWithType": [
+		{
+			"url": "APP_URL_REDIR",
+			"type": "Spa"
+		}
+	],
+	"requiredResourceAccess": [
+		{
+			"resourceAppId": "00000003-0000-0000-c000-000000000000",
+			"resourceAccess": [
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			]
+		}
+	],
+	"samlMetadataUrl": null,
+	"signInUrl": null,
+	"signInAudience": "AzureADMyOrg",
+	"tags": [],
+	"tokenEncryptionKeyId": null
+}

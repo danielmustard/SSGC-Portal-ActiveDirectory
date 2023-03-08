@@ -93,9 +93,10 @@ export default function Guestform(){
       azureToken : token.idToken //we only send JWT portion to backend
     }
   
-    
-    
-    axios.post(`${import.meta.env.BASE_URL}formData`, json)
+    let postUrl;
+    //`${import.meta.env.BASE_URL}formData`
+    import.meta.env.MODE == "dev" ? postUrl = "http://localhost:5001/formData" : postUrl = import.meta.env.BASE_URL
+    axios.post(postUrl, json)
       .then(response =>{
           if(response.data.status !== 201){ //if response status is not 201 there must be an error of some kind
             setError(`Error: ${response.data.lde_message}`)
@@ -124,7 +125,7 @@ export default function Guestform(){
       return(  
           <Form className="MainForm" autoComplete='off' autoCapitalize='off' autoCorrect='off' onSubmit={handleSubmit}>
             
-          <h1 class="display-5">Self Service Guest Portal</h1>
+          {/* <h1 class="display-5">Self Service Guest Portal</h1> */}
               <Alert key="warning" variant="warning">
                 By completing this form you and your guest both agree to the IT Acceptable use policy (Link Here)
               </Alert>
