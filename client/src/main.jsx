@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
+import '/src/css/index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 //msal imports*
@@ -14,7 +16,7 @@ import Guestform from 'src/pages/Guestform';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <MsalProvider instance={msalInstance}>
-      {window.location.pathname == "/admin" ? <Adminpage/> : <Guestform/>}
+      <Guestform/>
     </MsalProvider>
   </React.StrictMode>,
 )

@@ -211,14 +211,14 @@ export default function Guestform(){
       return(
           <AccountMadeScreen data={apiReturn}/>
       )
-    }else{
-      return(<PageLayout>
-        <UnauthenticatedTemplate>
-          {/* This only displays when user is unathenticated */}
-        <p>Sign in to create an account for your guest to use for a limited time.</p>
-        </UnauthenticatedTemplate>
-      </PageLayout>)
-    }//else render something else
+     }else{
+       return(<PageLayout>
+         <UnauthenticatedTemplate>
+           {/* This only displays when user is unathenticated */}
+         <p>Sign in to create an account for your guest to use for a limited time.</p>
+         </UnauthenticatedTemplate>
+       </PageLayout>)
+     }//else render something else
 
 }
 
